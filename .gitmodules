@@ -1,3 +1,3 @@
 [submodule "huggingface-spaces-titanic"]
-	path = huggingface-spaces-titanic
+	path = lab1/huggingface-spaces-titanic
 	url = https://huggingface.co/spaces/SodraZatre/titanic

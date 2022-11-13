@@ -128,5 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
-iris_model/
+# Custom ignores
+lab1/.hw_api_key
+lab1/iris_model/

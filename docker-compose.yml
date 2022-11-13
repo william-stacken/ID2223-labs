@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  id2223:
+    build: .
+    container_name: id2223
+    image: id2223:latest
+    volumes:
+      - ./:/opt/ID2223-labs
