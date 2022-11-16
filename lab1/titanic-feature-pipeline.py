@@ -85,12 +85,19 @@ def g():
     else:
         titanic_df = get_random_passenger()
 
-    titanic_df['Deck'] = titanic_df['Cabin'].map(lambda x: cabin_to_deck(x))
+    #titanic_df['Deck'] = titanic_df['Cabin'].map(lambda x: cabin_to_deck(x))
+    titanic_df['Deck'] = titanic_df['Cabin'].str.extract(r'([A-Z])?(\d)')[0]
+    titanic_df['Deck'] = titanic_df['Deck'].astype('category').cat.codes + 1
     titanic_df['Sex'] = titanic_df['Sex'].map(lambda x: sex_to_int(x))
+    titanic_df['Age'] = titanic_df['Age'].fillna(round(titanic_df['Age'].mean()))
 
     # Creating new family size column and normalizing fare by the family size
     titanic_df['family_size'] = titanic_df['SibSp'] + titanic_df['Parch'] + 1
     titanic_df['fare_per_person'] = titanic_df['Fare'] / (titanic_df['family_size'])
+
+    #print('   Mean Age = ' + str(t['age'].mean()))
+    #print('Std Dev Age = ' + str(t['age'].std()))
+    #t['age'] = (t['age'] - t['age'].mean()) / t['age'].std()
 
     # Remove unused columns
     for col in ['Cabin', 'Name', 'Ticket', 'Embarked', 'SibSp', 'Parch', 'PassengerId', 'Fare']:
@@ -99,7 +106,7 @@ def g():
     titanic_fg = fs.get_or_create_feature_group(
         name="titanic_modal",
         version=1,
-        primary_key=["Pclass","Sex","Age","FamilySize","Deck"], 
+        primary_key=["Pclass","Sex","Age","FamilySize","Deck","family_size","fare_per_person"], 
         description="titanic passenger survival dataset")
     titanic_fg.insert(titanic_df, write_options={"wait_for_job" : False})
 
