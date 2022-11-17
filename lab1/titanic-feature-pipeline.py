@@ -2,6 +2,7 @@ import os
 import modal
 import math
 import numpy
+from numpy import random
     
 BACKFILL=True
 LOCAL=True
@@ -28,48 +29,23 @@ def sex_to_int(val):
         return 1
     raise ValueError('Uexpected value "' + asstr + '"')
 
-
-def generate_flower(survived, sepal_len_max, sepal_len_min, sepal_width_max, sepal_width_min, 
-                    petal_len_max, petal_len_min, petal_width_max, petal_width_min):
-    """
-    Returns a single titanic flower as a single row in a DataFrame
-    """
-    import pandas as pd
-    import random
-
-    df = pd.DataFrame({ "sepal_length": [random.uniform(sepal_len_max, sepal_len_min)],
-                       "sepal_width": [random.uniform(sepal_width_max, sepal_width_min)],
-                       "petal_length": [random.uniform(petal_len_max, petal_len_min)],
-                       "petal_width": [random.uniform(petal_width_max, petal_width_min)]
-                      })
-    df['variety'] = name
-    return df
-
-
 def get_random_passenger():
     """
-    Returns a DataFrame containing one random titanic flower
+    Returns a DataFrame containing one random titanic passenger
     """
     import pandas as pd
-    import random
 
-    virginica_df = generate_flower("Virginica", 8, 5.5, 3.8, 2.2, 7, 4.5, 2.5, 1.4)
-    versicolor_df = generate_flower("Versicolor", 7.5, 4.5, 3.5, 2.1, 3.1, 5.5, 1.8, 1.0)
-    setosa_df =  generate_flower("Setosa", 6, 4.5, 4.5, 2.3, 1.2, 2, 0.7, 0.3)
+    #primary_key=["Pclass","Sex","Age","FamilySize","Deck","family_size","fare_per_person"], 
+    df = pd.DataFrame({ "pclass": [round(numpy.random.uniform(3))],
+                       "sex": [round(numpy.random.uniform(2)) - 1],
+                       "age": [round(numpy.random.normal(32.756888, 16.765796))],
+                       "deck": [round(max(min(numpy.random.normal(1.518617, 1.998583),7), 0))],
+                       "family_size": [random.uniform(petal_len_max, petal_len_min)],
+                       "fare_per_person": [random.uniform(petal_width_max, petal_width_min)]
+                      })
+    df['survived'] = round(numpy.random.uniform(2)) - 1
 
-    # randomly pick one of these 3 and write it to the featurestore
-    pick_random = random.uniform(0,3)
-    if pick_random >= 2:
-        titanic_df = virginica_df
-        print("Virginica added")
-    elif pick_random >= 1:
-        titanic_df = versicolor_df
-        print("Versicolor added")
-    else:
-        titanic_df = setosa_df
-        print("Setosa added")
-
-    return titanic_df
+    return df
 
 
 
@@ -77,8 +53,8 @@ def g():
     import hopsworks
     import pandas as pd
 
-    project = hopsworks.login()
-    fs = project.get_feature_store()
+    #project = hopsworks.login()
+    #fs = project.get_feature_store()
 
     if BACKFILL == True:
         titanic_df = pd.read_csv("https://raw.githubusercontent.com/ID2223KTH/id2223kth.github.io/master/assignments/lab1/titanic.csv")
@@ -86,10 +62,11 @@ def g():
         titanic_df = get_random_passenger()
 
     #titanic_df['Deck'] = titanic_df['Cabin'].map(lambda x: cabin_to_deck(x))
-    titanic_df['Deck'] = titanic_df['Cabin'].str.extract(r'([A-Z])?(\d)')[0]
-    titanic_df['Deck'] = titanic_df['Deck'].astype('category').cat.codes + 1
-    titanic_df['Sex'] = titanic_df['Sex'].map(lambda x: sex_to_int(x))
-    titanic_df['Age'] = titanic_df['Age'].fillna(round(titanic_df['Age'].mean()))
+    titanic_df['pclass'] = titanic_df['Pclass']
+    titanic_df['deck'] = titanic_df['Cabin'].str.extract(r'([A-Z])?(\d)')[0]
+    titanic_df['deck'] = titanic_df['deck'].astype('category').cat.codes + 1
+    titanic_df['sex'] = titanic_df['Sex'].map(lambda x: sex_to_int(x))
+    titanic_df['age'] = titanic_df['Age'].fillna(round(titanic_df['Age'].mean()))
 
     # Creating new family size column and normalizing fare by the family size
     titanic_df['family_size'] = titanic_df['SibSp'] + titanic_df['Parch'] + 1
@@ -99,14 +76,17 @@ def g():
     #print('Std Dev Age = ' + str(t['age'].std()))
     #t['age'] = (t['age'] - t['age'].mean()) / t['age'].std()
 
-    # Remove unused columns
-    for col in ['Cabin', 'Name', 'Ticket', 'Embarked', 'SibSp', 'Parch', 'PassengerId', 'Fare']:
+    # Remove unused columns and capitalized ones
+    for col in ['Pclass', 'Age', 'Sex', 'Cabin', 'Name', 'Ticket', 'Embarked', 'SibSp', 'Parch', 'PassengerId', 'Fare']:
         titanic_df = titanic_df.drop(col, axis='columns')
+
+    print(titanic_df)
+    exit()
 
     titanic_fg = fs.get_or_create_feature_group(
         name="titanic_modal",
         version=1,
-        primary_key=["Pclass","Sex","Age","FamilySize","Deck","family_size","fare_per_person"], 
+        primary_key=["Pclass","Sex","Age","Deck","family_size","fare_per_person"], 
         description="titanic passenger survival dataset")
     titanic_fg.insert(titanic_df, write_options={"wait_for_job" : False})
 

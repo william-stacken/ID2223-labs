@@ -5,3 +5,5 @@ seaborn
 dataframe-image
 modal-client
 gradio
+lxml
+
