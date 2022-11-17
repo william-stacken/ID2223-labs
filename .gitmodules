@@ -4,3 +4,9 @@
 [submodule "lab1/huggingface-spaces-titanic-monitoring"]
 	path = lab1/huggingface-spaces-titanic-monitoring
 	url = https://huggingface.co/spaces/SodraZatre/titanic-monitoring
+[submodule "lab1/huggingface-spaces-iris"]
+	path = lab1/huggingface-spaces-iris
+	url = https://huggingface.co/spaces/SodraZatre/iris
+[submodule "lab1/huggingface-spaces-iris-monitoring"]
+	path = lab1/huggingface-spaces-iris-monitoring
+	url = https://huggingface.co/spaces/SodraZatre/iris-monitoring

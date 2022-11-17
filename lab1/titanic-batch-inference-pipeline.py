@@ -97,8 +97,8 @@ def g():
         fig.savefig("./confusion_matrix.png")
         dataset_api.upload("./confusion_matrix.png", "Resources/images", overwrite=True)
     else:
-        print("You need " + required_predictions + " different survival predictions to create the confusion matrix.")
-        print("Run the batch inference pipeline more times until you get " + required_predictions + " different titanic survival predictions") 
+        print("You need %d different survival predictions to create the confusion matrix." % required_predictions)
+        print("Run the batch inference pipeline more times until you get %d different titanic survival predictions" % required_predictions) 
 
 
 if __name__ == "__main__":
