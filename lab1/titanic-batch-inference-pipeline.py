@@ -38,7 +38,7 @@ def g():
 
     survival = y_pred[y_pred.size - 1]
 
-    survival_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/%d.png" % survival
+    survival_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/img/%d.png" % survival
     print("survival predicted: %d" % survival)
     img = Image.open(requests.get(survival_url, stream=True).raw)
     img.save("./latest_titanic.png")
@@ -49,7 +49,7 @@ def g():
     df = titanic_fg.read()
     # print(df["Survived"])
     label = df.iloc[-1]["survived"]
-    label_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/%d.png" % label
+    label_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/img/%d.png" % label
     print("survival actual: %d" % label)
     img = Image.open(requests.get(label_url, stream=True).raw)            
     img.save("./actual_titanic.png")
