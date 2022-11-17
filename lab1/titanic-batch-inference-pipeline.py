@@ -35,15 +35,11 @@ def g():
     batch_data = feature_view.get_batch_data()
 
     y_pred = model.predict(batch_data)
-    print(y_pred)
 
-    survival = y_pred[y_pred.size-1]
-    print(survival)
-    print(type(survival))
-    exit()
+    survival = y_pred[y_pred.size - 1]
 
-    survival_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/" + survival + ".png"
-    print("survival predicted: " + survival)
+    survival_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/%d.png" % survival
+    print("survival predicted: %d" % survival)
     img = Image.open(requests.get(survival_url, stream=True).raw)
     img.save("./latest_titanic.png")
     dataset_api = project.get_dataset_api()
@@ -52,9 +48,9 @@ def g():
     titanic_fg = fs.get_feature_group(name="titanic_modal", version=1)
     df = titanic_fg.read()
     # print(df["Survived"])
-    label = df.iloc[-1]["Survived"]
-    label_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/" + label + ".png"
-    print("survival actual: " + label)
+    label = df.iloc[-1]["survived"]
+    label_url = "https://raw.githubusercontent.com/william-stacken/ID2223-labs/main/lab1/%d.png" % label
+    print("survival actual: %d" % label)
     img = Image.open(requests.get(label_url, stream=True).raw)            
     img.save("./actual_titanic.png")
     dataset_api.upload("./actual_titanic.png", "Resources/images", overwrite=True)

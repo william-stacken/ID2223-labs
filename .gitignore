@@ -131,7 +131,9 @@ dmypy.json
 # Custom ignores
 lab1/.hw_api_key
 lab1/iris_model/
+lab1/titanic_model/
 lab1/ca_chain
 lab1/certfile
 lab1/keyfile
 *.png
+!img/*.png
