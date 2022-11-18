@@ -137,3 +137,4 @@ lab1/certfile
 lab1/keyfile
 *.png
 !img/*.png
+.DS_Store
