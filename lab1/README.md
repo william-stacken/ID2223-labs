@@ -11,4 +11,15 @@ displays the latest flowers in the Hopsworks feature group and the flowers that 
 based on their features. The monitoring view also has a confusion matrix that visualizes the accuracy of the model,
 where each box represents the number of times a flower was predcited correctly or incorrectly.
 
+Original code from https://github.com/ID2223KTH/id2223kth.github.io/tree/master/src/serverless-ml-intro
+
 ## Titanic
+The second project is similar to the first one, execpt it predicts whether a passenger would have survived
+the Titanic disaster based on the features the class, age, sex, deck, family size, and fare per person.
+It utilizes the Titanic dataset (https://raw.githubusercontent.com/ID2223KTH/id2223kth.github.io/master/assignments/lab1/titanic.csv)
+and performs feature engineering and data cleaning to allow construtcing a model.
+See the user interface at Huggingface (https://huggingface.co/spaces/SodraZatre/) that allows
+the features of the passenger to be input and the predicted survival or non-survival to be output.
+
+This project also has a monitoring view (https://huggingface.co/spaces/SodraZatre/iris-monitoring) that displays the
+last prediction results by Modal and a confusion matrix.
