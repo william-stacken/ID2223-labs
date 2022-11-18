@@ -5,7 +5,7 @@ LOCAL=True
 
 if LOCAL == False:
    stub = modal.Stub()
-   hopsworks_image = modal.Image.debian_slim().pip_install(["hopsworks==3.0.4","joblib","seaborn","sklearn","dataframe-image"])
+   hopsworks_image = modal.Image.debian_slim().pip_install(["hopsworks==3.0.4","joblib","seaborn","scikit-learn","dataframe-image"])
    @stub.function(image=hopsworks_image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
    def f():
        g()
@@ -77,8 +77,8 @@ def g():
 
 
     df_recent = history_df.tail(5)
-    dfi.export(df_recent, './df_recent.png', table_conversion = 'matplotlib')
-    dataset_api.upload("./df_recent.png", "Resources/images", overwrite=True)
+    dfi.export(df_recent, './titanic_df_recent.png', table_conversion = 'matplotlib')
+    dataset_api.upload("./titanic_df_recent.png", "Resources/images", overwrite=True)
 
     predictions = history_df[['prediction']]
     labels = history_df[['label']]
@@ -89,13 +89,13 @@ def g():
     if predictions.value_counts().count() == required_predictions:
         results = confusion_matrix(labels, predictions)
 
-        df_cm = pd.DataFrame(results, ['True Survival', 'True Non-Survival'],
-                         ['Pred Survival', 'Pred Non-Survival'])
+        df_cm = pd.DataFrame(results, ['True Non-Survival', 'True Survival'],
+                         ['Pred Non-Survival', 'Pred Survival'])
 
         cm = sns.heatmap(df_cm, annot=True)
         fig = cm.get_figure()
-        fig.savefig("./confusion_matrix.png")
-        dataset_api.upload("./confusion_matrix.png", "Resources/images", overwrite=True)
+        fig.savefig("./titanic_confusion_matrix.png")
+        dataset_api.upload("./titanic_confusion_matrix.png", "Resources/images", overwrite=True)
     else:
         print("You need %d different survival predictions to create the confusion matrix." % required_predictions)
         print("Run the batch inference pipeline more times until you get %d different titanic survival predictions" % required_predictions) 

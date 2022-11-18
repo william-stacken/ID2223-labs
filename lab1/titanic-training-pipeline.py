@@ -1,7 +1,7 @@
 import os
 import modal
 
-LOCAL=True
+LOCAL=False
 
 if LOCAL == False:
    stub = modal.Stub()
@@ -58,8 +58,8 @@ def g():
     results = confusion_matrix(y_test, y_pred)
 
     # Create the confusion matrix as a figure, we will later store it as a PNG image file
-    df_cm = pd.DataFrame(results, ['True Survival', 'True Non-Survival'],
-                         ['Pred Survival', 'Pred Non-Survival'])
+    df_cm = pd.DataFrame(results, ['True Non-Survival', 'True Survival'],
+                         ['Pred Non-Survival', 'Pred Survival'])
     cm = sns.heatmap(df_cm, annot=True)
     fig = cm.get_figure()
 
@@ -73,7 +73,7 @@ def g():
 
     # Save both our model and the confusion matrix to 'model_dir', whose contents will be uploaded to the model registry
     joblib.dump(model, model_dir + "/titanic_model.pkl")
-    fig.savefig(model_dir + "/confusion_matrix.png")    
+    fig.savefig(model_dir + "/titanic_confusion_matrix.png")    
 
 
     # Specify the schema of the model's input/output using the features (X_train) and labels (y_train)

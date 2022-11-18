@@ -4,8 +4,8 @@ import math
 import numpy
 from numpy import random
     
-BACKFILL=True
-LOCAL=True
+BACKFILL=False
+LOCAL=False
 
 if LOCAL == False:
    stub = modal.Stub()
@@ -35,15 +35,26 @@ def get_random_passenger():
     """
     import pandas as pd
 
-    #primary_key=["Pclass","Sex","Age","FamilySize","Deck","family_size","fare_per_person"], 
-    df = pd.DataFrame({ "pclass": [round(numpy.random.uniform(3))],
-                       "sex": [round(numpy.random.uniform(2)) - 1],
-                       "age": [round(numpy.random.normal(32.756888, 16.765796) * 2) / 2],
-                       "deck": [round(max(min(numpy.random.normal(1.518617, 1.998583),7), 0))],
-                       "family_size": [round(max(numpy.random.normal(1.976064, 1.339642), 1))],
-                       "fare_per_person": [round(max(numpy.random.normal(27.168979, 41.494386), 0), 2)]
-                      })
-    df['survived'] = round(numpy.random.uniform(2)) - 1
+    survived = round(numpy.random.uniform(2)) - 1
+
+    if survived:
+        df = pd.DataFrame({ "pclass": [round(numpy.random.uniform(3))],
+                           "sex": [round(numpy.random.uniform(2)) - 1],
+                           "age": [round(numpy.random.normal(32.756888, 16.765796) * 2) / 2],
+                           "deck": [round(max(min(numpy.random.normal(1.518617, 1.998583), 7), 0))],
+                           "family_size": [round(max(numpy.random.normal(1.976064, 1.339642), 1))],
+                           "fare_per_person": [round(max(numpy.random.normal(27.168979, 41.494386), 0.0), 2)]
+                          })
+    else:
+        df = pd.DataFrame({ "pclass": [round(numpy.random.uniform(2)) + 1],
+                           "sex": [round(numpy.random.uniform(2)) - 1],
+                           "age": [round(numpy.random.normal(32.756888, 8.765796) * 2) / 2],
+                           "deck": [round(max(min(numpy.random.normal(1.518617, 1.998583), 7), 0))],
+                           "family_size": [round(max(numpy.random.normal(1.0, 1.339642), 1))],
+                           "fare_per_person": [round(max(numpy.random.normal(37.168979, 41.494386), 0.0), 2)]
+                          })
+
+    df['survived'] = survived
 
     return df
 
@@ -59,11 +70,11 @@ def g():
     if BACKFILL == True:
         titanic_df = pd.read_csv("https://raw.githubusercontent.com/ID2223KTH/id2223kth.github.io/master/assignments/lab1/titanic.csv")
 
-        #titanic_df['Deck'] = titanic_df['Cabin'].map(lambda x: cabin_to_deck(x))
         titanic_df['survived'] = titanic_df['Survived']
         titanic_df['pclass'] = titanic_df['Pclass']
         titanic_df['deck'] = titanic_df['Cabin'].str.extract(r'([A-Z])?(\d)')[0]
-        titanic_df['deck'] = titanic_df['deck'].astype('category').cat.codes + 1
+	# Cast deck to int64 to ensure it is an bigint in hopsworks
+        titanic_df['deck'] = numpy.int64(titanic_df['deck'].astype('category').cat.codes + 1)
         titanic_df['sex'] = titanic_df['Sex'].map(lambda x: sex_to_int(x))
         titanic_df['age'] = titanic_df['Age'].fillna(round(titanic_df['Age'].mean()))
 
@@ -84,9 +95,9 @@ def g():
     titanic_fg = fs.get_or_create_feature_group(
         name="titanic_modal",
         version=1,
-        primary_key=["Pclass","Sex","Age","Deck","family_size","fare_per_person"],
+        primary_key=["pclass","sex","age","deck","family_size","fare_per_person"],
         description="titanic passenger survival dataset")
-    titanic_fg.insert(titanic_df, write_options={"wait_for_job" : False})
+    titanic_fg.insert(titanic_df, write_options={"wait_for_job" : True})
 
 if __name__ == "__main__":
     if LOCAL == True :
