@@ -18,8 +18,8 @@ The second project is similar to the first one, execpt it predicts whether a pas
 the Titanic disaster based on the features the class, age, sex, deck, family size, and fare per person.
 It utilizes the Titanic dataset (https://raw.githubusercontent.com/ID2223KTH/id2223kth.github.io/master/assignments/lab1/titanic.csv)
 and performs feature engineering and data cleaning to allow construtcing a model.
-See the user interface at Huggingface (https://huggingface.co/spaces/SodraZatre/) that allows
+See the user interface at Huggingface (https://huggingface.co/spaces/SodraZatre/titanic) that allows
 the features of the passenger to be input and the predicted survival or non-survival to be output.
 
-This project also has a monitoring view (https://huggingface.co/spaces/SodraZatre/iris-monitoring) that displays the
+This project also has a monitoring view (https://huggingface.co/spaces/SodraZatre/titanic-monitoring) that displays the
 last prediction results by Modal and a confusion matrix.
