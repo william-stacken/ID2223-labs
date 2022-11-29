@@ -10,3 +10,6 @@
 [submodule "lab1/huggingface-spaces-iris-monitoring"]
 	path = lab1/huggingface-spaces-iris-monitoring
 	url = https://huggingface.co/spaces/SodraZatre/iris-monitoring
+[submodule "lab2/hugging-face-spaces-lab2"]
+	path = lab2/hugging-face-spaces-lab2
+	url = https://huggingface.co/spaces/Tardpipl/lab2
