@@ -23,7 +23,18 @@ Finally, it starts the training for 4000 training steps, making sure to save che
 to Google Drive to ensure that progress is not lost when Google Colab inevitibly reclaims the used GPU.
 Once the training is done, the best-performing model from all checkpoints is pushed to the Huggingface hub.
 
-The gradio UI application can be found in the following [Huggingface space](https://huggingface.co/spaces/SodraZatre/lab2-whisper).
+The gradio UI application can be found in the following [Huggingface space](https://huggingface.co/spaces/SodraZatre/lab2-whisper)
+and the model can be found [here](https://huggingface.co/SodraZatre/lab2-whisper-sv).
 
 ## Improvement
 
+As can be seen in the huggingface model, it achieves a WER of 19.8946%, which is an improvement over the
+[original model](https://github.com/ID2223KTH/id2223kth.github.io/blob/master/assignments/lab2/swedish_fine_tune_whisper.ipynb)
+which achieved a WER of 32%. This could be due to using a model-centric-approach and changing the `save_steps` and `eval_steps`
+hyperparameters to 500, allowing for more frequent evaluation at the cost of taking longer time to complete. Once the training
+finished, it was determined that the model created at step 2500 was the best performing one, and this model would not have been
+evaluated without lowering the `eval_steps` parameter.
+
+A different model architecture could also be used, such as the 
+
+As for using a data-centric-approach to achieving a better model performance, 
