@@ -35,6 +35,7 @@ hyperparameters to 500, allowing for more frequent evaluation at the cost of tak
 finished, it was determined that the model created at step 2500 was the best performing one, and this model would not have been
 evaluated without lowering the `eval_steps` parameter.
 
-A different model architecture could also be used, such as the 
-
-As for using a data-centric-approach to achieving a better model performance, 
+As for using a data-centric-approach to achieving a better model performance, [this](https://github.com/jim-schwoebel/voice_datasets)
+list contains an extensive number of open source voice datasets. For example, [Librispeech](https://www.openslr.org/12) is a dataset
+that could compete with Mozilla's common voice dataset. It contains hundreds of hours (several tens of GB) of voice samples.
+It is already 16 kHz, so it would not be necessary to downsample it for it to work with Whisper.
