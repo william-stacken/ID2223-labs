@@ -66,7 +66,7 @@ def api_request_df():
 
 	return df
 
-def dataframe_cleaning(df):
+def feature_engineer_df(df):
 	# Drop incomplete entries and normalize the timestamp
 	# to prevent gradient explosion
 	df = df.dropna()
@@ -83,7 +83,7 @@ def main():
 	if BACKFILL and TO_CSV:
 		df.to_csv(csv_file)
 	else:
-		df = dataframe_cleaning(df)
+		df = feature_engineer_df(df)
 
 		hw = hopsworks.login()
 		feature_store = hw.get_feature_store()
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 		main()
 	else:
 		stub = modal.Stub()
-		image = modal.Image.debian_slim().apt_install(["libgomp1"]).pip_install(["hopsworks==3.0.4"])
+		image = modal.Image.debian_slim().pip_install(["hopsworks==3.0.4"])
 
 		@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
 		def modal_main():

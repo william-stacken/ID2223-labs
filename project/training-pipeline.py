@@ -1,5 +1,6 @@
 import os
 import hopsworks
+import modal
 import numpy
 import seaborn
 import pandas
@@ -13,14 +14,15 @@ from keras.callbacks import EarlyStopping
 LOCAL=True
 
 FEATURE_GROUP_NAME = "earthquake_pred"
-FEATURE_GROUP_VERSION=1
+FEATURE_GROUP_VERSION = 1
 
 FEATURE_VIEW_NAME = "earthquake_pred_view"
-FEATURE_VIEW_DESCRIPTION="Earthquake prediction dataset"
-FEATURE_VIEW_VERSION=1
+FEATURE_VIEW_DESCRIPTION = "Earthquake prediction dataset"
+FEATURE_VIEW_VERSION = 1
 
 MODEL_NAME = "earthquake_model"
 MODEL_DESCRIPTION = "Earthquake magnitude and depth predictor"
+MODEL_VERSION = 1
 MODEL_DIRECTORY = MODEL_NAME
 
 loss = 'mse'
@@ -32,8 +34,8 @@ def plot_history(model_fit_log):
 	val_met = numpy.asarray(model_fit_log.history['val_' + metrics[0]])
 
 	values = numpy.zeros((len(met), 2), dtype=float)
-	values[:,0] = met
-	values[:,1] = val_met
+	values[:, 0] = met
+	values[:, 1] = val_met
 
 	seaborn.set(style="whitegrid")
 	return seaborn.lineplot(data=pandas.DataFrame(
@@ -50,7 +52,10 @@ def main():
 	feature_store = hw.get_feature_store()
 
 	try:
-		feature_view = feature_store.get_feature_view(name=FEATURE_VIEW_NAME, version=FEATURE_VIEW_VERSION)
+		feature_view = feature_store.get_feature_view(
+			name=FEATURE_VIEW_NAME,
+			version=FEATURE_VIEW_VERSION
+		)
 	except:
 		feature_view = feature_store.create_feature_view(
 			name=FEATURE_VIEW_NAME,
@@ -82,6 +87,11 @@ def main():
 	log = model.fit(X_train, y_train, batch_size=50, validation_split=0.15, epochs=30, callbacks=train_cb)
 	report = model.evaluate(X_test, y_test)
 
+	y_pred = model.predict(X_test)
+	print(y_pred)
+	print(y_test)
+	exit()
+
 	#plot_history(log)
 
 	if not os.path.isdir(MODEL_DIRECTORY):
@@ -96,6 +106,7 @@ def main():
 	hw_model = registry.python.create_model(
 		name=MODEL_NAME,
 		description=MODEL_DESCRIPTION,
+		version=MODEL_VERSION,
 		metrics={metrics[0]: report[1]},
 		model_schema=model_schema
 	)
@@ -107,7 +118,7 @@ if __name__ == "__main__":
 		main()
 	else:
 		stub = modal.Stub()
-		image = modal.Image.debian_slim().apt_install(["libgomp1"]).pip_install(["hopsworks==3.0.4", "seaborn", "tensorflow", "joblib"])
+		image = modal.Image.debian_slim().apt_install(["libgomp1"]).pip_install(["hopsworks==3.0.4", "seaborn", "tensorflow"])
 
 		@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
 		def modal_main():
