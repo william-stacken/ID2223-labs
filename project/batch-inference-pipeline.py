@@ -53,7 +53,7 @@ def main():
 		name=PRED_FEATURE_GROUP_NAME,
 		version=PRED_FEATURE_GROUP_VERSION,
 		description=PRED_FEATURE_GROUP_DESCRIPTION,
-		primary_key=["datetime"],
+		primary_key=["datetime", "predicted_depth", "actual_depth", "predicted_mag", "actual_mag"],
 	)
 
 	now = datetime.now()
@@ -64,6 +64,7 @@ def main():
 		'predicted_mag': [pred[1] for pred in y_pred],
 		'actual_mag': [act for act in last_df["mag"]]
 	})
+	print(pred_df)
 	pred_feature_group.insert(pred_df, write_options={"wait_for_job" : False})
 
 	dataframe_image.export(pred_df, PRED_TABLE_FILE, table_conversion = 'matplotlib')

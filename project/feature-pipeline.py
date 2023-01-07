@@ -11,7 +11,7 @@ from datetime import timedelta
 LOCAL=True
 
 # If true, backfill data. Otherwise, load new data from the API and upload it to Hopsworks
-BACKFILL=True
+BACKFILL=False
 
 # If BACKFILL is True, backfill data either from the API to a local CSV file or from a local CSV file to Hopsworks
 TO_CSV=False
