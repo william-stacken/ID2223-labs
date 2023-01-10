@@ -19,8 +19,9 @@ the `earthquake_pred_monitoring` feature group and also as a dataframe image in 
 should be executed after the feature pipeline has uploaded new data to `earthquake_pred` and `earthquake_pred_view`.
 
 ## Huggingface Spaces
-`hugging-face-spaces-earthquake` contains a Gradio interface that can be used to make predictions based on
-input features.
+[`hugging-face-spaces-earthquake`](https://huggingface.co/spaces/SodraZatre/earthquake) contains a Gradio interface
+that can be used to make predictions based on input features.
 
-`hugging-face-spaces-earthquake-monitoring` contains a monitoring Gradio interface that can be fetch the outputs
-of the batch inference pipeline. This can be used to infer the performance of the model.
+[`hugging-face-spaces-earthquake-monitoring`](https://huggingface.co/spaces/SodraZatre/earthquake) contains a
+monitoring Gradio interface that can be fetch the outputs of the batch inference pipeline. This can be used to
+infer the performance of the model.
