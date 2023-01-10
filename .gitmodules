@@ -13,3 +13,9 @@
 [submodule "lab2/hugging-face-spaces-lab-2"]
 	path = lab2/hugging-face-spaces-lab2
 	url = https://huggingface.co/spaces/SodraZatre/lab2-whisper
+[submodule "project/hugging-face-spaces-earthquake"]
+	path = project/hugging-face-spaces-earthquake
+	url = https://huggingface.co/spaces/SodraZatre/earthquake
+[submodule "project/hugging-face-spaces-earthquake-monitoring"]
+	path = project/hugging-face-spaces-earthquake-monitoring
+	url = https://huggingface.co/spaces/SodraZatre/earthquake-monitoring

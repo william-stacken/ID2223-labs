@@ -5,3 +5,4 @@ For lab1, please see [here](lab1/README.md) for more information.
 
 For lab2, please see [here](lab2/README.md) for more information.
 
+For the final project, see [here](project/README.md) for more information.
