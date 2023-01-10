@@ -23,6 +23,14 @@ FEATURE_GROUP_NAME = "earthquake_pred"
 FEATURE_GROUP_DESCRIPTION="Earthquake prediction dataset"
 FEATURE_GROUP_VERSION=1
 
+if not LOCAL:
+	stub = modal.Stub()
+	image = modal.Image.debian_slim().pip_install(["hopsworks==3.0.4"])
+
+	@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
+	def modal_main():
+		main()
+
 def api_request_df():
 	columns = ["latitude", "longitude", "depth", "mag", "time"]
 
@@ -71,6 +79,7 @@ def feature_engineer_df(df):
 	# to prevent gradient explosion
 	df = df.dropna()
 	df["time"] = df["time"] / 1E10
+	df = df.drop("depth", axis='columns')
 
 	return df
 
@@ -99,12 +108,5 @@ if __name__ == "__main__":
 	if LOCAL:
 		main()
 	else:
-		stub = modal.Stub()
-		image = modal.Image.debian_slim().pip_install(["hopsworks==3.0.4"])
-
-		@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
-		def modal_main():
-			main()
-
 		with stub.run():
 			modal_main()

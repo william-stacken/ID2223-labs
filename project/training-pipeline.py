@@ -25,9 +25,17 @@ MODEL_DESCRIPTION = "Earthquake magnitude and depth predictor"
 MODEL_VERSION = 1
 MODEL_DIRECTORY = MODEL_NAME
 
-loss = 'mse'
-optimizer = 'adam'
-metrics = ['accuracy']
+loss = 'mae'
+optimizer = 'adam' #keras.optimizers.Adam(learning_rate=0.01)
+metrics = ['mae']
+
+if not LOCAL:
+	stub = modal.Stub()
+	image = modal.Image.debian_slim().apt_install(["libgomp1"]).pip_install(["hopsworks==3.0.4", "seaborn", "tensorflow"])
+
+	@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
+	def modal_main():
+		main()
 
 def plot_history(model_fit_log):
 	met = numpy.asarray(model_fit_log.history[metrics[0]])
@@ -61,36 +69,33 @@ def main():
 			name=FEATURE_VIEW_NAME,
 			description=FEATURE_VIEW_DESCRIPTION,
 			version=FEATURE_VIEW_VERSION,
-			labels=["depth", "mag"],
+			labels=["mag"],
 			query=feature_store.get_feature_group(
 				name=FEATURE_GROUP_NAME,
 				version=FEATURE_GROUP_VERSION
 			).select_all()
 		)
 
-	X_train, X_test, y_train, y_test = feature_view.train_test_split(0.15)
+	X_train, X_test, y_train, y_test = feature_view.train_test_split(0.1)
 
 	model = keras.models.Sequential([
-		keras.layers.Dense(32, activation="elu", kernel_initializer="he_normal", input_shape=(X_train.shape[1],)),
+		keras.layers.Dense(32, kernel_initializer="he_normal", input_shape=(X_train.shape[1],)),
 		keras.layers.Dropout(rate=0.2),
-		keras.layers.Dense(32, activation="elu", kernel_initializer="he_normal"),
+		keras.layers.Dense(32, kernel_initializer="he_normal"),
 		keras.layers.Dropout(rate=0.2),
-		keras.layers.Dense(32, activation="elu", kernel_initializer="he_normal"),
+		keras.layers.Dense(32, kernel_initializer="he_normal"),
 		keras.layers.BatchNormalization(),
 		keras.layers.Dropout(rate=0.2),
-		keras.layers.Dense(y_train.shape[1], activation='softmax')
+		keras.layers.Dense(y_train.shape[1])
 	])
 
 	train_cb = EarlyStopping(monitor=metrics[0], min_delta=0.01, patience=3)
 
 	model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
-	log = model.fit(X_train, y_train, batch_size=50, validation_split=0.15, epochs=30, callbacks=train_cb)
+	log = model.fit(X_train, y_train, batch_size=50, epochs=30, callbacks=train_cb)
 	report = model.evaluate(X_test, y_test)
 
 	y_pred = model.predict(X_test)
-	print(y_pred)
-	print(y_test)
-	exit()
 
 	#plot_history(log)
 
@@ -117,12 +122,5 @@ if __name__ == "__main__":
 	if LOCAL:
 		main()
 	else:
-		stub = modal.Stub()
-		image = modal.Image.debian_slim().apt_install(["libgomp1"]).pip_install(["hopsworks==3.0.4", "seaborn", "tensorflow"])
-
-		@stub.function(image=image, schedule=modal.Period(days=1), secret=modal.Secret.from_name("HOPSWORKS_API_KEY"))
-		def modal_main():
-			main()
-
 		with stub.run():
 			modal_main()
