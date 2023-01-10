@@ -16,8 +16,7 @@ BACKFILL=False
 # If BACKFILL is True, backfill data either from the API to a local CSV file or from a local CSV file to Hopsworks
 TO_CSV=False
 
-BACKFILL_CSV_FILE = \
-"https://raw.githubusercontent.com/william-stacken/ID2223-labs/project/project/backfill.csv"
+BACKFILL_CSV_FILE = "backfill.csv"
 
 FEATURE_GROUP_NAME = "earthquake_pred"
 FEATURE_GROUP_DESCRIPTION="Earthquake prediction dataset"
@@ -64,8 +63,8 @@ def api_request_df():
 		mag = properties[0]
 		time = properties[2]
 
-		latitude = coordinates[0]
-		longitude = coordinates[1]
+		longitude = coordinates[0]
+		latitude = coordinates[1]
 		depth = coordinates[2]
 
 		ourdata.append([latitude, longitude, depth, mag, time])
