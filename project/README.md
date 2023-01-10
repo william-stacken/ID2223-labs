@@ -22,6 +22,6 @@ should be executed after the feature pipeline has uploaded new data to `earthqua
 [`hugging-face-spaces-earthquake`](https://huggingface.co/spaces/SodraZatre/earthquake) contains a Gradio interface
 that can be used to make predictions based on input features.
 
-[`hugging-face-spaces-earthquake-monitoring`](https://huggingface.co/spaces/SodraZatre/earthquake) contains a
+[`hugging-face-spaces-earthquake-monitoring`](https://huggingface.co/spaces/SodraZatre/earthquake-monitoring) contains a
 monitoring Gradio interface that can be fetch the outputs of the batch inference pipeline. This can be used to
 infer the performance of the model.
