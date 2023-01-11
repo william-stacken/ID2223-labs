@@ -26,7 +26,7 @@ MODEL_VERSION = 1
 MODEL_DIRECTORY = MODEL_NAME
 
 loss = 'mae'
-optimizer = 'adam' #keras.optimizers.Adam(learning_rate=0.01)
+optimizer = 'adam'
 metrics = ['mae']
 
 if not LOCAL:
@@ -76,16 +76,16 @@ def main():
 			).select_all()
 		)
 
-	X_train, X_test, y_train, y_test = feature_view.train_test_split(0.1)
+	X_train, X_test, y_train, y_test = feature_view.train_test_split(0.15)
 
 	model = keras.models.Sequential([
-		keras.layers.Dense(32, kernel_initializer="he_normal", input_shape=(X_train.shape[1],)),
+		keras.layers.Dense(32, kernel_initializer="he_normal", input_shape=(X_train.shape[1],), activation="sigmoid"),
 		keras.layers.Dropout(rate=0.2),
-		keras.layers.Dense(32, kernel_initializer="he_normal"),
+		keras.layers.Dense(32, kernel_initializer="he_normal", activation="sigmoid"),
 		keras.layers.Dropout(rate=0.2),
-		keras.layers.Dense(32, kernel_initializer="he_normal"),
+		keras.layers.Dense(32, kernel_initializer="he_normal", activation="sigmoid"),
 		keras.layers.BatchNormalization(),
-		keras.layers.Dropout(rate=0.2),
+		#keras.layers.Dropout(rate=0.2),
 		keras.layers.Dense(y_train.shape[1])
 	])
 
@@ -94,8 +94,6 @@ def main():
 	model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
 	log = model.fit(X_train, y_train, batch_size=50, epochs=30, callbacks=train_cb)
 	report = model.evaluate(X_test, y_test)
-
-	y_pred = model.predict(X_test)
 
 	#plot_history(log)
 
